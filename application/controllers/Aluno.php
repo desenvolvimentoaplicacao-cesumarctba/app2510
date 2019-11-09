@@ -19,13 +19,44 @@ class Aluno extends CI_Controller
 
     public function formAlunos()
     {
-        $this->load->view('form_alunos');
+        $tipo = $_GET['tipo'] ?? '';
+        // inserção
+        if ($tipo == 1) {
+            $data['tipo'] = $tipo;
+            $this->load->view('form_alunos', $data);
+        } else {
+            $id = $_GET['id'] ?? null;
+            $this->load->model('Aluno_model');
+            $aluno = $this->Aluno_model->listaAlunos($id);
+            $data['aluno'] = $aluno;
+            $data['tipo'] = $tipo;
+            $this->load->view('form_alunos', $data);
+        }
+        
+        
     }
 
     public function recebePost()
     {
+        $tipo = $_GET['tipo'] ?? '';
+        if ($tipo == 1) {
+            $this->load->model('Aluno_model');
+            $this->Aluno_model->insere($_POST);
+            header('Location: /Aluno');// retorna para index
+        } else {
+            $this->load->model('Aluno_model');
+            $this->Aluno_model->altera($_POST);
+            header('Location: /Aluno');// retorna para index
+        }
+        
+    }
+
+
+    public function excluiRegistro()
+    {
+        $id = $_GET['id'] ?? '';
         $this->load->model('Aluno_model');
-        $this->Aluno_model->insere($_POST);
+        $this->Aluno_model->deleta($id);
         header('Location: /Aluno');// retorna para index
     }
 
